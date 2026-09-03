@@ -2,7 +2,15 @@ name: lib_app_version
 description: "Check whether a newer version of your app is on the App Store / Play Store, detect TestFlight builds and show an update dialog. Zero extra dependencies, zero native setup."
 version: 1.0.0
 publish_to: 'none'
-homepage:
+homepage: https://github.com/winterzxzz/lib_app_version
+repository: https://github.com/winterzxzz/lib_app_version
+issue_tracker: https://github.com/winterzxzz/lib_app_version/issues
+topics:
+  - version
+  - update
+  - testflight
+  - app-store
+  - play-store
 
 environment:
   sdk: ^3.8.0
