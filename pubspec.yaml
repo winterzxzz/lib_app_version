@@ -1,0 +1,27 @@
+name: lib_app_version
+description: "Check whether a newer version of your app is on the App Store / Play Store, detect TestFlight builds and show an update dialog. Zero extra dependencies, zero native setup."
+version: 1.0.0
+publish_to: 'none'
+homepage:
+
+environment:
+  sdk: ^3.8.0
+  flutter: '>=3.22.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.winterzxzz.lib_app_version
+        pluginClass: LibAppVersionPlugin
+      ios:
+        pluginClass: LibAppVersionPlugin
