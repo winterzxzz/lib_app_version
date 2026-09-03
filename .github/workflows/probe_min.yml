@@ -1,8 +1,0 @@
-name: probe_min
-on: push
-jobs:
-  a:
-    runs-on: ubuntu-latest
-    if: ${{ false }}
-    steps:
-      - run: echo hi
