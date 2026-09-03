@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lib_app_version/lib_app_version.dart';
+import 'package:app_update_check/app_update_check.dart';
 
 void main() {
   group('VersionNumber.parse', () {

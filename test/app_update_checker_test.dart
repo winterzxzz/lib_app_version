@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lib_app_version/lib_app_version.dart';
+import 'package:app_update_check/app_update_check.dart';
 
 import 'helpers.dart';
 
@@ -12,11 +12,11 @@ void main() {
 
   group('check', () {
     test('reports an available update and a Play Store link', () async {
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: FakePlatform(),
         source: const StaticVersionSource(version: '1.3.0'),
       );
-      final AppVersionStatus status = await checker.check();
+      final AppUpdateStatus status = await checker.check();
       expect(status.isUpdateAvailable, isTrue);
       expect(status.localVersion, '1.2.0');
       expect(status.storeVersion, '1.3.0');
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('androidId overrides the package name in the link', () async {
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         androidId: 'com.other.app',
         platform: FakePlatform(),
         source: const StaticVersionSource(version: '1.0.0'),
@@ -38,7 +38,7 @@ void main() {
 
     test('iOS link comes from a numeric iosId', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         iosId: '6762586391',
         platform: FakePlatform(info: iosInfo),
         source: const StaticVersionSource(version: '1.0.0'),
@@ -51,7 +51,7 @@ void main() {
 
     test('iOS link prefers the source URL, and is null without any', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      final AppVersionChecker withUrl = AppVersionChecker(
+      final AppUpdateChecker withUrl = AppUpdateChecker(
         iosId: '123',
         platform: FakePlatform(info: iosInfo),
         source: const StaticVersionSource(
@@ -64,7 +64,7 @@ void main() {
         'https://apps.apple.com/vn/app/x/id123',
       );
 
-      final AppVersionChecker withoutUrl = AppVersionChecker(
+      final AppUpdateChecker withoutUrl = AppUpdateChecker(
         platform: FakePlatform(info: iosInfo),
         source: const StaticVersionSource(version: '1.0.0'),
       );
@@ -75,7 +75,7 @@ void main() {
       final CountingSource source = CountingSource(
         info: const StoreVersionInfo(version: '1.0.0'),
       );
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: FakePlatform(),
         source: source,
       );
@@ -93,7 +93,7 @@ void main() {
       final CountingSource source = CountingSource(
         info: const StoreVersionInfo(version: '1.0.0'),
       );
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: FakePlatform(),
         source: source,
         cacheDuration: Duration.zero,
@@ -106,34 +106,31 @@ void main() {
     test('concurrent checks share one request', () async {
       final CountingSource source = CountingSource()
         ..completer = Completer<StoreVersionInfo?>();
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: FakePlatform(),
         source: source,
       );
-      final Future<AppVersionStatus> first = checker.check();
-      final Future<AppVersionStatus> second = checker.check();
+      final Future<AppUpdateStatus> first = checker.check();
+      final Future<AppUpdateStatus> second = checker.check();
       source.completer!.complete(const StoreVersionInfo(version: '2.0.0'));
-      final List<AppVersionStatus> results = await Future.wait(
-        <Future<AppVersionStatus>>[first, second],
+      final List<AppUpdateStatus> results = await Future.wait(
+        <Future<AppUpdateStatus>>[first, second],
       );
       expect(source.calls, 1);
-      expect(
-        results.every((AppVersionStatus s) => s.isUpdateAvailable),
-        isTrue,
-      );
+      expect(results.every((AppUpdateStatus s) => s.isUpdateAvailable), isTrue);
     });
 
     test('captures lookup errors instead of throwing', () async {
       final CountingSource source = CountingSource(
-        error: const AppVersionException('offline'),
+        error: const AppUpdateException('offline'),
       );
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: FakePlatform(),
         source: source,
       );
-      final AppVersionStatus status = await checker.check();
+      final AppUpdateStatus status = await checker.check();
       expect(status.hasError, isTrue);
-      expect(status.error, isA<AppVersionException>());
+      expect(status.error, isA<AppUpdateException>());
       expect(status.isUpdateAvailable, isFalse);
       expect(status.storeUrl, contains('play.google.com'));
       // Errors are not cached: the next call retries.
@@ -142,30 +139,30 @@ void main() {
     });
 
     test('captures platform errors', () async {
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: FakePlatform(infoError: StateError('no channel')),
         source: const StaticVersionSource(version: '9.0.0'),
       );
-      final AppVersionStatus status = await checker.check();
+      final AppUpdateStatus status = await checker.check();
       expect(status.hasError, isTrue);
       expect(status.local, LocalAppInfo.unknown);
       expect(status.isUpdateAvailable, isFalse);
     });
 
     test('forceStoreVersion pretends the store has that version', () async {
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         forceStoreVersion: '99.0.0',
         platform: FakePlatform(),
-        source: CountingSource(error: const AppVersionException('offline')),
+        source: CountingSource(error: const AppUpdateException('offline')),
       );
-      final AppVersionStatus status = await checker.check();
+      final AppUpdateStatus status = await checker.check();
       expect(status.storeVersion, '99.0.0');
       expect(status.isUpdateAvailable, isTrue);
     });
 
     test('minimumVersion from checker, call or source', () async {
       final FakePlatform platform = FakePlatform();
-      final AppVersionChecker fromChecker = AppVersionChecker(
+      final AppUpdateChecker fromChecker = AppUpdateChecker(
         minimumVersion: '1.2.1',
         platform: platform,
         source: const StaticVersionSource(version: '1.3.0'),
@@ -176,7 +173,7 @@ void main() {
         AppUpdateType.optional,
       );
 
-      final AppVersionChecker fromSource = AppVersionChecker(
+      final AppUpdateChecker fromSource = AppUpdateChecker(
         platform: platform,
         source: const StaticVersionSource(
           version: '1.3.0',
@@ -190,7 +187,7 @@ void main() {
   group('local info', () {
     test('is read once and cached', () async {
       final FakePlatform platform = FakePlatform();
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: platform,
         source: const StaticVersionSource(version: '1.0.0'),
       );
@@ -201,7 +198,7 @@ void main() {
     });
 
     test('isTestFlight reflects the install source', () async {
-      final AppVersionChecker tf = AppVersionChecker(
+      final AppUpdateChecker tf = AppUpdateChecker(
         platform: FakePlatform(
           info: const LocalAppInfo(
             version: '1.0.0',
@@ -212,12 +209,10 @@ void main() {
       expect(await tf.isTestFlight(), isTrue);
       expect(await tf.getInstallSource(), AppInstallSource.testFlight);
 
-      final AppVersionChecker play = AppVersionChecker(
-        platform: FakePlatform(),
-      );
+      final AppUpdateChecker play = AppUpdateChecker(platform: FakePlatform());
       expect(await play.isTestFlight(), isFalse);
 
-      final AppVersionChecker broken = AppVersionChecker(
+      final AppUpdateChecker broken = AppUpdateChecker(
         platform: FakePlatform(infoError: StateError('x')),
       );
       expect(await broken.isTestFlight(), isFalse);
@@ -232,7 +227,7 @@ void main() {
           'market://details?id=com.example.app': false,
         },
       );
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: platform,
         source: const StaticVersionSource(version: '1.0.0'),
       );
@@ -248,7 +243,7 @@ void main() {
       final CountingSource source = CountingSource(
         info: const StoreVersionInfo(version: '1.0.0'),
       );
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: platform,
         source: source,
       );
@@ -265,7 +260,7 @@ void main() {
           'itms-apps://apps.apple.com/app/id123': false,
         },
       );
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         iosId: '123',
         platform: platform,
         source: const StaticVersionSource(version: '1.0.0'),
@@ -280,7 +275,7 @@ void main() {
     test('iOS without iosId falls back to the lookup URL', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       final FakePlatform platform = FakePlatform(info: iosInfo);
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: platform,
         source: const StaticVersionSource(
           version: '1.0.0',
@@ -297,7 +292,7 @@ void main() {
     test('returns false when no link exists', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       final FakePlatform platform = FakePlatform(info: iosInfo);
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: platform,
         source: CountingSource(),
       );
@@ -307,7 +302,7 @@ void main() {
 
     test('returns false when nothing can open the link', () async {
       final FakePlatform platform = FakePlatform(openDefault: false);
-      final AppVersionChecker checker = AppVersionChecker(
+      final AppUpdateChecker checker = AppUpdateChecker(
         platform: platform,
         source: const StaticVersionSource(version: '1.0.0'),
       );
@@ -316,32 +311,32 @@ void main() {
     });
   });
 
-  group('AppVersion facade', () {
-    tearDown(() => AppVersion.instance = AppVersionChecker());
+  group('AppUpdate facade', () {
+    tearDown(() => AppUpdate.instance = AppUpdateChecker());
 
     test('init replaces the shared checker', () async {
       final FakePlatform platform = FakePlatform();
-      AppVersion.init(
+      AppUpdate.init(
         androidId: 'com.facade.app',
         platform: platform,
         source: const StaticVersionSource(version: '5.0.0'),
       );
-      expect(AppVersion.instance.androidId, 'com.facade.app');
-      expect(await AppVersion.isUpdateAvailable(), isTrue);
-      expect(await AppVersion.isTestFlight(), isFalse);
-      expect((await AppVersion.getLocalInfo()).packageName, 'com.example.app');
-      expect(await AppVersion.getInstallSource(), AppInstallSource.playStore);
-      expect((await AppVersion.check()).storeUrl, contains('com.facade.app'));
-      expect(await AppVersion.openStore(), isTrue);
-      AppVersion.clearCache();
+      expect(AppUpdate.instance.androidId, 'com.facade.app');
+      expect(await AppUpdate.isUpdateAvailable(), isTrue);
+      expect(await AppUpdate.isTestFlight(), isFalse);
+      expect((await AppUpdate.getLocalInfo()).packageName, 'com.example.app');
+      expect(await AppUpdate.getInstallSource(), AppInstallSource.playStore);
+      expect((await AppUpdate.check()).storeUrl, contains('com.facade.app'));
+      expect(await AppUpdate.openStore(), isTrue);
+      AppUpdate.clearCache();
     });
 
     test('instance can be swapped directly', () async {
-      AppVersion.instance = AppVersionChecker(
+      AppUpdate.instance = AppUpdateChecker(
         platform: FakePlatform(),
         source: const StaticVersionSource(version: '0.1.0'),
       );
-      expect(await AppVersion.isUpdateAvailable(), isFalse);
+      expect(await AppUpdate.isUpdateAvailable(), isFalse);
     });
   });
 }

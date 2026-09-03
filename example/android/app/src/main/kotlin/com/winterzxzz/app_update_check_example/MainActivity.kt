@@ -1,4 +1,4 @@
-package com.winterzxzz.lib_app_version_example
+package com.winterzxzz.app_update_check_example
 
 import io.flutter.embedding.android.FlutterActivity
 

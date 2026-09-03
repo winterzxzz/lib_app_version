@@ -1,10 +1,9 @@
-name: lib_app_version
-description: "Check whether a newer version of your app is on the App Store / Play Store, detect TestFlight builds and show an update dialog. Zero extra dependencies, zero native setup."
+name: app_update_check
+description: "Check the App Store / Google Play for a newer version, show an optional or forced update dialog, and detect TestFlight builds. Zero dependencies."
 version: 1.0.0
-publish_to: 'none'
-homepage: https://github.com/winterzxzz/lib_app_version
-repository: https://github.com/winterzxzz/lib_app_version
-issue_tracker: https://github.com/winterzxzz/lib_app_version/issues
+homepage: https://github.com/winterzxzz/app_update_check
+repository: https://github.com/winterzxzz/app_update_check
+issue_tracker: https://github.com/winterzxzz/app_update_check/issues
 topics:
   - version
   - update
@@ -29,7 +28,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.winterzxzz.lib_app_version
-        pluginClass: LibAppVersionPlugin
+        package: com.winterzxzz.app_update_check
+        pluginClass: AppUpdateCheckPlugin
       ios:
-        pluginClass: LibAppVersionPlugin
+        pluginClass: AppUpdateCheckPlugin

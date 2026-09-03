@@ -1,4 +1,4 @@
-package com.winterzxzz.lib_app_version
+package com.winterzxzz.app_update_check
 
 import android.content.Context
 import android.content.Intent
@@ -11,13 +11,13 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 /**
- * Native side of `lib_app_version`.
+ * Native side of `app_update_check`.
  *
  * Methods:
  *  - `getAppInfo`  -> map(version, buildNumber, packageName, installSource, installerPackage)
  *  - `openUrl(url)` -> true when an activity handled the intent
  */
-class LibAppVersionPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
+class AppUpdateCheckPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
 
@@ -114,7 +114,7 @@ class LibAppVersionPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
     }
 
     private companion object {
-        const val CHANNEL_NAME = "lib_app_version"
+        const val CHANNEL_NAME = "app_update_check"
         const val PLAY_STORE_PACKAGE = "com.android.vending"
     }
 }

@@ -18,11 +18,11 @@ enum AppUpdateType {
   required,
 }
 
-/// Result of [AppVersionChecker.check]: local build info, store info, and all
+/// Result of [AppUpdateChecker.check]: local build info, store info, and all
 /// the derived flags you typically need.
 @immutable
-class AppVersionStatus {
-  const AppVersionStatus({
+class AppUpdateStatus {
+  const AppUpdateStatus({
     required this.local,
     required this.checkedAt,
     this.store,
@@ -124,7 +124,7 @@ class AppVersionStatus {
   /// Any update (optional or required) should be offered.
   bool get shouldUpdate => updateType != AppUpdateType.none;
 
-  AppVersionStatus copyWith({
+  AppUpdateStatus copyWith({
     LocalAppInfo? local,
     StoreVersionInfo? store,
     VersionNumber? minimumVersion,
@@ -132,7 +132,7 @@ class AppVersionStatus {
     Object? error,
     DateTime? checkedAt,
   }) {
-    return AppVersionStatus(
+    return AppUpdateStatus(
       local: local ?? this.local,
       store: store ?? this.store,
       minimumVersion: minimumVersion ?? this.minimumVersion,
@@ -144,7 +144,7 @@ class AppVersionStatus {
 
   @override
   String toString() =>
-      'AppVersionStatus(local: $localVersion+$buildNumber, '
+      'AppUpdateStatus(local: $localVersion+$buildNumber, '
       'store: ${storeVersion ?? '-'}, minimum: ${minimumVersion ?? '-'}, '
       'updateType: ${updateType.name}, installSource: ${installSource.name}'
       '${error != null ? ', error: $error' : ''})';

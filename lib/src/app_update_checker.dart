@@ -3,11 +3,11 @@ import 'package:flutter/material.dart' show BuildContext, showDialog;
 
 import 'http/simple_http.dart';
 import 'models/app_install_source.dart';
-import 'models/app_version_status.dart';
+import 'models/app_update_status.dart';
 import 'models/local_app_info.dart';
 import 'models/store_version_info.dart';
 import 'models/version_number.dart';
-import 'platform/lib_app_version_platform.dart';
+import 'platform/app_update_check_platform.dart';
 import 'sources/store_version_source.dart';
 import 'sources/version_source.dart';
 import 'store_urls.dart';
@@ -16,14 +16,14 @@ import 'ui/app_update_dialog.dart';
 /// Checks the installed version against the store, detects TestFlight builds
 /// and opens the store listing.
 ///
-/// Most apps only need the static [AppVersion] facade, which wraps a single
+/// Most apps only need the static [AppUpdate] facade, which wraps a single
 /// shared instance of this class. Create your own instance when you want
 /// several configurations or full control in tests.
 ///
 /// Every method is safe to call: nothing throws on network errors, the result
-/// simply reports no update (see [AppVersionStatus.error]).
-class AppVersionChecker {
-  AppVersionChecker({
+/// simply reports no update (see [AppUpdateStatus.error]).
+class AppUpdateChecker {
+  AppUpdateChecker({
     this.androidId,
     this.iosId,
     this.iosCountry,
@@ -33,9 +33,9 @@ class AppVersionChecker {
     this.cacheDuration = const Duration(minutes: 30),
     this.timeout = const Duration(seconds: 10),
     VersionSource? source,
-    LibAppVersionPlatform? platform,
+    AppUpdateCheckPlatform? platform,
     HttpGet? httpGet,
-  }) : _platform = platform ?? const MethodChannelLibAppVersion(),
+  }) : _platform = platform ?? const MethodChannelAppUpdateCheck(),
        _source =
            source ??
            StoreVersionSource(
@@ -73,7 +73,7 @@ class AppVersionChecker {
   /// Network timeout for store lookups.
   final Duration timeout;
 
-  final LibAppVersionPlatform _platform;
+  final AppUpdateCheckPlatform _platform;
   final VersionSource _source;
 
   LocalAppInfo? _local;
@@ -126,7 +126,7 @@ class AppVersionChecker {
   /// The store answer is cached for [cacheDuration]; pass [refresh] to force a
   /// new lookup. [minimumVersion] overrides the checker-level value for this
   /// call (handy when it comes from remote config).
-  Future<AppVersionStatus> check({
+  Future<AppUpdateStatus> check({
     bool refresh = false,
     String? minimumVersion,
   }) async {
@@ -155,7 +155,7 @@ class AppVersionChecker {
       );
     }
 
-    return AppVersionStatus(
+    return AppUpdateStatus(
       local: local,
       store: store,
       minimumVersion: VersionNumber.tryParse(
@@ -282,7 +282,7 @@ class AppVersionChecker {
   ///   dialog.
   ///
   /// Returns the status so callers can log it. Never throws.
-  Future<AppVersionStatus> showUpdateDialogIfNeeded(
+  Future<AppUpdateStatus> showUpdateDialogIfNeeded(
     BuildContext context, {
     bool force = false,
     String? minimumVersion,
@@ -292,7 +292,7 @@ class AppVersionChecker {
     bool showReleaseNotes = false,
     bool useRootNavigator = true,
   }) async {
-    final AppVersionStatus status = await check(
+    final AppUpdateStatus status = await check(
       refresh: refresh,
       minimumVersion: minimumVersion,
     );

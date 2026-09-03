@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lib_app_version/lib_app_version.dart';
-import 'package:lib_app_version_example/main.dart';
+import 'package:app_update_check/app_update_check.dart';
+import 'package:app_update_check_example/main.dart';
 
-class _FakePlatform extends LibAppVersionPlatform {
+class _FakePlatform extends AppUpdateCheckPlatform {
   const _FakePlatform();
 
   @override
@@ -19,7 +19,7 @@ class _FakePlatform extends LibAppVersionPlatform {
 
 void main() {
   testWidgets('renders local build info', (WidgetTester tester) async {
-    AppVersion.instance = AppVersionChecker(
+    AppUpdate.instance = AppUpdateChecker(
       platform: const _FakePlatform(),
       source: const StaticVersionSource(version: '1.0.0'),
     );

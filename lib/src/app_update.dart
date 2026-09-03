@@ -1,31 +1,31 @@
 import 'package:flutter/widgets.dart';
 
-import 'app_version_checker.dart';
+import 'app_update_checker.dart';
 import 'http/simple_http.dart';
 import 'models/app_install_source.dart';
-import 'models/app_version_status.dart';
+import 'models/app_update_status.dart';
 import 'models/local_app_info.dart';
-import 'platform/lib_app_version_platform.dart';
+import 'platform/app_update_check_platform.dart';
 import 'sources/version_source.dart';
 import 'ui/app_update_dialog.dart';
 
-/// One-liner access to a shared [AppVersionChecker].
+/// One-liner access to a shared [AppUpdateChecker].
 ///
 /// ```dart
 /// // main.dart (optional; defaults to the app's own ids)
-/// AppVersion.init(iosId: '6762586391');
+/// AppUpdate.init(iosId: '6762586391');
 ///
 /// // anywhere
-/// await AppVersion.showUpdateDialogIfNeeded(context);
-/// final bool testFlight = await AppVersion.isTestFlight();
+/// await AppUpdate.showUpdateDialogIfNeeded(context);
+/// final bool testFlight = await AppUpdate.isTestFlight();
 /// ```
-abstract final class AppVersion {
+abstract final class AppUpdate {
   /// The shared checker. Assign your own (for example in tests).
-  static AppVersionChecker instance = AppVersionChecker();
+  static AppUpdateChecker instance = AppUpdateChecker();
 
   /// Configures the shared checker. Optional, synchronous, call it once
   /// before the first check (for example in `main`). See
-  /// [AppVersionChecker.new] for the parameters.
+  /// [AppUpdateChecker.new] for the parameters.
   static void init({
     String? androidId,
     String? iosId,
@@ -36,10 +36,10 @@ abstract final class AppVersion {
     Duration cacheDuration = const Duration(minutes: 30),
     Duration timeout = const Duration(seconds: 10),
     VersionSource? source,
-    LibAppVersionPlatform? platform,
+    AppUpdateCheckPlatform? platform,
     HttpGet? httpGet,
   }) {
-    instance = AppVersionChecker(
+    instance = AppUpdateChecker(
       androidId: androidId,
       iosId: iosId,
       iosCountry: iosCountry,
@@ -54,31 +54,31 @@ abstract final class AppVersion {
     );
   }
 
-  /// See [AppVersionChecker.getLocalInfo].
+  /// See [AppUpdateChecker.getLocalInfo].
   static Future<LocalAppInfo> getLocalInfo() => instance.getLocalInfo();
 
-  /// See [AppVersionChecker.getInstallSource].
+  /// See [AppUpdateChecker.getInstallSource].
   static Future<AppInstallSource> getInstallSource() =>
       instance.getInstallSource();
 
-  /// See [AppVersionChecker.isTestFlight].
+  /// See [AppUpdateChecker.isTestFlight].
   static Future<bool> isTestFlight() => instance.isTestFlight();
 
-  /// See [AppVersionChecker.check].
-  static Future<AppVersionStatus> check({
+  /// See [AppUpdateChecker.check].
+  static Future<AppUpdateStatus> check({
     bool refresh = false,
     String? minimumVersion,
   }) => instance.check(refresh: refresh, minimumVersion: minimumVersion);
 
-  /// See [AppVersionChecker.isUpdateAvailable].
+  /// See [AppUpdateChecker.isUpdateAvailable].
   static Future<bool> isUpdateAvailable({bool refresh = false}) =>
       instance.isUpdateAvailable(refresh: refresh);
 
-  /// See [AppVersionChecker.openStore].
+  /// See [AppUpdateChecker.openStore].
   static Future<bool> openStore() => instance.openStore();
 
-  /// See [AppVersionChecker.showUpdateDialogIfNeeded].
-  static Future<AppVersionStatus> showUpdateDialogIfNeeded(
+  /// See [AppUpdateChecker.showUpdateDialogIfNeeded].
+  static Future<AppUpdateStatus> showUpdateDialogIfNeeded(
     BuildContext context, {
     bool force = false,
     String? minimumVersion,
@@ -98,6 +98,6 @@ abstract final class AppVersion {
     useRootNavigator: useRootNavigator,
   );
 
-  /// See [AppVersionChecker.clearCache].
+  /// See [AppUpdateChecker.clearCache].
   static void clearCache() => instance.clearCache();
 }

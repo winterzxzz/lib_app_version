@@ -47,7 +47,7 @@ class StoreVersionSource extends VersionSource {
       case TargetPlatform.linux:
       case TargetPlatform.macOS:
       case TargetPlatform.windows:
-        throw AppVersionException(
+        throw AppUpdateException(
           'Store lookup is not supported on ${defaultTargetPlatform.name}',
         );
     }

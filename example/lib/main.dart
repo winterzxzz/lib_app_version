@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lib_app_version/lib_app_version.dart';
+import 'package:app_update_check/app_update_check.dart';
 
 void main() {
   // Optional. Without it the running app's own bundle id / application id is
   // used. A numeric iosId gives a store link even when the lookup fails.
-  AppVersion.init(
+  AppUpdate.init(
     // androidId: 'com.plant.identification.care',
     // iosId: '6762586391',
     // iosCountry: 'vn',
@@ -18,7 +18,7 @@ class ExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'lib_app_version example',
+      title: 'app_update_check example',
       theme: ThemeData(colorSchemeSeed: Colors.green, useMaterial3: true),
       home: const ExampleHomePage(),
     );
@@ -34,7 +34,7 @@ class ExampleHomePage extends StatefulWidget {
 
 class _ExampleHomePageState extends State<ExampleHomePage> {
   LocalAppInfo? _local;
-  AppVersionStatus? _status;
+  AppUpdateStatus? _status;
   bool _busy = false;
   bool _simulateUpdate = false;
 
@@ -44,12 +44,12 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
     _loadLocal();
     // Typical usage: check once the first screen is up.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) AppVersion.showUpdateDialogIfNeeded(context);
+      if (mounted) AppUpdate.showUpdateDialogIfNeeded(context);
     });
   }
 
   Future<void> _loadLocal() async {
-    final LocalAppInfo local = await AppVersion.getLocalInfo();
+    final LocalAppInfo local = await AppUpdate.getLocalInfo();
     if (mounted) setState(() => _local = local);
   }
 
@@ -63,12 +63,12 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
   }
 
   Future<void> _check() => _run(() async {
-    final AppVersionStatus status = await AppVersion.check(refresh: true);
+    final AppUpdateStatus status = await AppUpdate.check(refresh: true);
     if (mounted) setState(() => _status = status);
   });
 
   Future<void> _showDialog({bool force = false}) => _run(() async {
-    final AppVersionStatus status = await AppVersion.showUpdateDialogIfNeeded(
+    final AppUpdateStatus status = await AppUpdate.showUpdateDialogIfNeeded(
       context,
       force: force,
       showReleaseNotes: true,
@@ -80,15 +80,15 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
     setState(() => _simulateUpdate = value);
     // Re-configure the shared checker. `forceStoreVersion` pretends the store
     // has version 99.0.0 so the dialog can be tried without publishing.
-    AppVersion.init(forceStoreVersion: value ? '99.0.0' : null);
+    AppUpdate.init(forceStoreVersion: value ? '99.0.0' : null);
   }
 
   @override
   Widget build(BuildContext context) {
     final LocalAppInfo? local = _local;
-    final AppVersionStatus? status = _status;
+    final AppUpdateStatus? status = _status;
     return Scaffold(
-      appBar: AppBar(title: const Text('lib_app_version')),
+      appBar: AppBar(title: const Text('app_update_check')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: <Widget>[
@@ -140,7 +140,7 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
           ),
           const SizedBox(height: 8),
           OutlinedButton(
-            onPressed: _busy ? null : () => _run(AppVersion.openStore),
+            onPressed: _busy ? null : () => _run(AppUpdate.openStore),
             child: const Text('Open store'),
           ),
           if (_busy) ...<Widget>[

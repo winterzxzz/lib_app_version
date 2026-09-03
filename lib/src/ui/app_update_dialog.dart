@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../models/app_version_status.dart';
+import '../models/app_update_status.dart';
 
 /// Builds a fully custom update dialog.
 ///
@@ -10,7 +10,7 @@ import '../models/app_version_status.dart';
 typedef AppUpdateDialogBuilder =
     Widget Function(
       BuildContext context,
-      AppVersionStatus status,
+      AppUpdateStatus status,
       bool mandatory,
       Future<bool> Function() openStore,
     );
@@ -33,7 +33,7 @@ class AppUpdateDialogTexts {
   final String laterButton;
 
   /// The body text for [status].
-  String messageFor(AppVersionStatus status) {
+  String messageFor(AppUpdateStatus status) {
     final String? custom = message;
     if (custom != null) return custom;
     final String? store = status.storeVersion;
@@ -71,7 +71,7 @@ class AppUpdateDialog extends StatelessWidget {
     this.showReleaseNotes = false,
   });
 
-  final AppVersionStatus status;
+  final AppUpdateStatus status;
   final bool mandatory;
   final AppUpdateDialogTexts texts;
 
@@ -81,7 +81,7 @@ class AppUpdateDialog extends StatelessWidget {
   /// Called when the user taps "Later".
   final VoidCallback? onLater;
 
-  /// Show [AppVersionStatus.releaseNotes] under the message when available.
+  /// Show [AppUpdateStatus.releaseNotes] under the message when available.
   final bool showReleaseNotes;
 
   @override

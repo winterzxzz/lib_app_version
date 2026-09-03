@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="lib_app_version_example"
+        android:label="app_update_check_example"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

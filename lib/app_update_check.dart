@@ -5,22 +5,22 @@
 /// Quick start:
 ///
 /// ```dart
-/// AppVersion.init(iosId: '6762586391');            // optional
-/// await AppVersion.showUpdateDialogIfNeeded(context);
+/// AppUpdate.init(iosId: '6762586391');            // optional
+/// await AppUpdate.showUpdateDialogIfNeeded(context);
 /// ```
 library;
 
-export 'src/app_version.dart';
-export 'src/app_version_checker.dart';
+export 'src/app_update.dart';
+export 'src/app_update_checker.dart';
 export 'src/errors.dart';
 export 'src/http/simple_http.dart'
     show HttpGet, HttpTextResponse, defaultHttpGet;
 export 'src/models/app_install_source.dart';
-export 'src/models/app_version_status.dart';
+export 'src/models/app_update_status.dart';
 export 'src/models/local_app_info.dart';
 export 'src/models/store_version_info.dart';
 export 'src/models/version_number.dart';
-export 'src/platform/lib_app_version_platform.dart';
+export 'src/platform/app_update_check_platform.dart';
 export 'src/sources/app_store_version_source.dart';
 export 'src/sources/play_store_version_source.dart';
 export 'src/sources/store_version_source.dart';

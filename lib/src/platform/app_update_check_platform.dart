@@ -2,9 +2,9 @@ import 'package:flutter/services.dart';
 
 import '../models/local_app_info.dart';
 
-/// Native bridge used by [AppVersionChecker]. Swap it in tests.
-abstract class LibAppVersionPlatform {
-  const LibAppVersionPlatform();
+/// Native bridge used by [AppUpdateChecker]. Swap it in tests.
+abstract class AppUpdateCheckPlatform {
+  const AppUpdateCheckPlatform();
 
   /// Version, build number, package name and install source of the running
   /// app.
@@ -15,10 +15,10 @@ abstract class LibAppVersionPlatform {
   Future<bool> openUrl(String url);
 }
 
-/// [LibAppVersionPlatform] backed by the `lib_app_version` method channel.
-class MethodChannelLibAppVersion extends LibAppVersionPlatform {
-  const MethodChannelLibAppVersion([
-    this.channel = const MethodChannel('lib_app_version'),
+/// [AppUpdateCheckPlatform] backed by the `app_update_check` method channel.
+class MethodChannelAppUpdateCheck extends AppUpdateCheckPlatform {
+  const MethodChannelAppUpdateCheck([
+    this.channel = const MethodChannel('app_update_check'),
   ]);
 
   final MethodChannel channel;

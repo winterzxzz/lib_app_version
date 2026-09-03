@@ -1,15 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lib_app_version/lib_app_version.dart';
+import 'package:app_update_check/app_update_check.dart';
 
 void main() {
-  AppVersionStatus status({
+  AppUpdateStatus status({
     String local = '1.2.0',
     String? store,
     String? minimum,
     AppInstallSource source = AppInstallSource.appStore,
     Object? error,
   }) {
-    return AppVersionStatus(
+    return AppUpdateStatus(
       local: LocalAppInfo(version: local, installSource: source),
       store: store == null ? null : StoreVersionInfo(version: store),
       minimumVersion: VersionNumber.tryParse(minimum),
@@ -19,7 +19,7 @@ void main() {
   }
 
   test('update available when store is newer', () {
-    final AppVersionStatus s = status(store: '1.3.0');
+    final AppUpdateStatus s = status(store: '1.3.0');
     expect(s.isUpdateAvailable, isTrue);
     expect(s.isUpToDate, isFalse);
     expect(s.isAheadOfStore, isFalse);
@@ -28,7 +28,7 @@ void main() {
   });
 
   test('up to date when versions match', () {
-    final AppVersionStatus s = status(store: '1.2');
+    final AppUpdateStatus s = status(store: '1.2');
     expect(s.isUpdateAvailable, isFalse);
     expect(s.isUpToDate, isTrue);
     expect(s.updateType, AppUpdateType.none);
@@ -36,7 +36,7 @@ void main() {
   });
 
   test('ahead of store marks a test build', () {
-    final AppVersionStatus s = status(local: '1.3.0', store: '1.2.0');
+    final AppUpdateStatus s = status(local: '1.3.0', store: '1.2.0');
     expect(s.isAheadOfStore, isTrue);
     expect(s.isTestBuild, isTrue);
     expect(s.isTestFlight, isFalse);
@@ -44,7 +44,7 @@ void main() {
   });
 
   test('TestFlight install source', () {
-    final AppVersionStatus s = status(
+    final AppUpdateStatus s = status(
       store: '1.2.0',
       source: AppInstallSource.testFlight,
     );
@@ -54,21 +54,21 @@ void main() {
   });
 
   test('minimum version makes the update required', () {
-    final AppVersionStatus s = status(store: '1.3.0', minimum: '1.2.1');
+    final AppUpdateStatus s = status(store: '1.3.0', minimum: '1.2.1');
     expect(s.isUpdateRequired, isTrue);
     expect(s.updateType, AppUpdateType.required);
   });
 
   test('minimum version below local does not require', () {
-    final AppVersionStatus s = status(store: '1.3.0', minimum: '1.0.0');
+    final AppUpdateStatus s = status(store: '1.3.0', minimum: '1.0.0');
     expect(s.isUpdateRequired, isFalse);
     expect(s.updateType, AppUpdateType.optional);
   });
 
   test('required even when the store lookup failed', () {
-    final AppVersionStatus s = status(
+    final AppUpdateStatus s = status(
       minimum: '2.0.0',
-      error: const AppVersionException('down'),
+      error: const AppUpdateException('down'),
     );
     expect(s.hasStoreVersion, isFalse);
     expect(s.hasError, isTrue);
@@ -77,7 +77,7 @@ void main() {
   });
 
   test('no store info means no update', () {
-    final AppVersionStatus s = status(error: 'boom');
+    final AppUpdateStatus s = status(error: 'boom');
     expect(s.hasStoreVersion, isFalse);
     expect(s.isUpdateAvailable, isFalse);
     expect(s.isUpToDate, isFalse);

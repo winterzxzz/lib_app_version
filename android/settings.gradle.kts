@@ -1,1 +1,1 @@
-rootProject.name = "lib_app_version"
+rootProject.name = "app_update_check"

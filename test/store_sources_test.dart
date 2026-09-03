@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lib_app_version/lib_app_version.dart';
+import 'package:app_update_check/app_update_check.dart';
 
 import 'helpers.dart';
 
@@ -60,11 +60,11 @@ void main() {
       expect(await source.fetch(iosInfo), isNull);
     });
 
-    test('throws AppVersionException on HTTP and network errors', () async {
+    test('throws AppUpdateException on HTTP and network errors', () async {
       final AppStoreVersionSource bad = AppStoreVersionSource(
         httpGet: FakeHttp(const HttpTextResponse(500, '')).call,
       );
-      expect(() => bad.fetch(iosInfo), throwsA(isA<AppVersionException>()));
+      expect(() => bad.fetch(iosInfo), throwsA(isA<AppUpdateException>()));
 
       final AppStoreVersionSource offline = AppStoreVersionSource(
         httpGet: FakeHttp(
@@ -72,12 +72,12 @@ void main() {
           error: 'offline',
         ).call,
       );
-      expect(() => offline.fetch(iosInfo), throwsA(isA<AppVersionException>()));
+      expect(() => offline.fetch(iosInfo), throwsA(isA<AppUpdateException>()));
 
       final AppStoreVersionSource garbage = AppStoreVersionSource(
         httpGet: FakeHttp(const HttpTextResponse(200, 'not json')).call,
       );
-      expect(() => garbage.fetch(iosInfo), throwsA(isA<AppVersionException>()));
+      expect(() => garbage.fetch(iosInfo), throwsA(isA<AppUpdateException>()));
     });
   });
 
@@ -129,7 +129,7 @@ void main() {
       );
       expect(
         () => noVersion.fetch(androidInfo),
-        throwsA(isA<AppVersionException>()),
+        throwsA(isA<AppUpdateException>()),
       );
 
       final PlayStoreVersionSource serverError = PlayStoreVersionSource(
@@ -137,7 +137,7 @@ void main() {
       );
       expect(
         () => serverError.fetch(androidInfo),
-        throwsA(isA<AppVersionException>()),
+        throwsA(isA<AppUpdateException>()),
       );
     });
   });
@@ -166,7 +166,7 @@ void main() {
     test('throws on unsupported platforms', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       const StoreVersionSource source = StoreVersionSource();
-      expect(() => source.fetch(iosInfo), throwsA(isA<AppVersionException>()));
+      expect(() => source.fetch(iosInfo), throwsA(isA<AppUpdateException>()));
     });
   });
 

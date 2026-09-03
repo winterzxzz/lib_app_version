@@ -14,7 +14,7 @@ class HttpTextResponse {
 /// Signature of the function used to perform HTTP GET requests.
 ///
 /// Inject your own (for example one backed by `package:http` or a mock in
-/// tests) through `AppVersionChecker(httpGet: ...)`.
+/// tests) through `AppUpdateChecker(httpGet: ...)`.
 typedef HttpGet =
     Future<HttpTextResponse> Function(
       Uri uri, {

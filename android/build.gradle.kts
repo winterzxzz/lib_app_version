@@ -1,4 +1,4 @@
-group = "com.winterzxzz.lib_app_version"
+group = "com.winterzxzz.app_update_check"
 version = "1.0.0"
 
 buildscript {
@@ -26,7 +26,7 @@ plugins {
 }
 
 android {
-    namespace = "com.winterzxzz.lib_app_version"
+    namespace = "com.winterzxzz.app_update_check"
 
     compileSdk = 36
 

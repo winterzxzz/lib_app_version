@@ -1,11 +1,11 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lib_app_version/lib_app_version.dart';
+import 'package:app_update_check/app_update_check.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const MethodChannel channel = MethodChannel('lib_app_version');
+  const MethodChannel channel = MethodChannel('app_update_check');
   final List<MethodCall> log = <MethodCall>[];
 
   setUp(() {
@@ -34,7 +34,7 @@ void main() {
   });
 
   test('getAppInfo decodes the native map', () async {
-    const MethodChannelLibAppVersion platform = MethodChannelLibAppVersion();
+    const MethodChannelAppUpdateCheck platform = MethodChannelAppUpdateCheck();
     final LocalAppInfo info = await platform.getAppInfo();
     expect(info.version, '2.0.1');
     expect(info.buildNumber, '7');
@@ -45,7 +45,7 @@ void main() {
   });
 
   test('openUrl passes the url', () async {
-    const MethodChannelLibAppVersion platform = MethodChannelLibAppVersion();
+    const MethodChannelAppUpdateCheck platform = MethodChannelAppUpdateCheck();
     expect(await platform.openUrl('market://details?id=a'), isTrue);
     expect(log.single.method, 'openUrl');
     expect(log.single.arguments, <String, Object?>{
@@ -54,7 +54,7 @@ void main() {
   });
 
   test('the default checker talks to the channel', () async {
-    final AppVersionChecker checker = AppVersionChecker(
+    final AppUpdateChecker checker = AppUpdateChecker(
       source: const StaticVersionSource(version: '1.0.0'),
     );
     expect(await checker.isTestFlight(), isTrue);

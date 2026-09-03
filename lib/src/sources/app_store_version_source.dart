@@ -46,17 +46,17 @@ class AppStoreVersionSource extends VersionSource {
     try {
       response = await httpGet(uri, timeout: timeout);
     } catch (error) {
-      throw AppVersionException('App Store lookup failed', error);
+      throw AppUpdateException('App Store lookup failed', error);
     }
     if (!response.isOk) {
-      throw AppVersionException(
+      throw AppUpdateException(
         'App Store lookup failed with HTTP ${response.statusCode}',
       );
     }
     try {
       return parseLookupJson(response.body);
     } catch (error) {
-      throw AppVersionException('Could not parse App Store response', error);
+      throw AppUpdateException('Could not parse App Store response', error);
     }
   }
 

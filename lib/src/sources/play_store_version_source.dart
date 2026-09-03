@@ -8,7 +8,7 @@ import 'version_source.dart';
 ///
 /// Google offers no official API for this, so the page HTML is scanned for the
 /// version string the same way `new_version_plus` does. Should Google change
-/// the page layout, [fetch] throws and [AppVersionStatus.error] is set; the
+/// the page layout, [fetch] throws and [AppUpdateStatus.error] is set; the
 /// app keeps working.
 class PlayStoreVersionSource extends VersionSource {
   const PlayStoreVersionSource({
@@ -60,17 +60,17 @@ class PlayStoreVersionSource extends VersionSource {
     try {
       response = await httpGet(uri, timeout: timeout);
     } catch (error) {
-      throw AppVersionException('Play Store lookup failed', error);
+      throw AppUpdateException('Play Store lookup failed', error);
     }
     if (response.statusCode == 404) return null;
     if (!response.isOk) {
-      throw AppVersionException(
+      throw AppUpdateException(
         'Play Store lookup failed with HTTP ${response.statusCode}',
       );
     }
     final String? version = parseVersion(response.body);
     if (version == null) {
-      throw AppVersionException(
+      throw AppUpdateException(
         'Could not find the version in the Play Store page',
       );
     }

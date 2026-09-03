@@ -1,4 +1,4 @@
-<h1 align="center">lib_app_version</h1>
+<h1 align="center">app_update_check</h1>
 
 <p align="center">
   <strong>Know when your Flutter app is out of date — and whether it's running from TestFlight.</strong><br/>
@@ -7,17 +7,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/winterzxzz/lib_app_version/actions/workflows/ci.yml"><img src="https://github.com/winterzxzz/lib_app_version/actions/workflows/ci.yml/badge.svg" alt="CI status" /></a>
-  <a href="https://github.com/winterzxzz/lib_app_version/releases"><img src="https://img.shields.io/github/v/tag/winterzxzz/lib_app_version?label=version&color=0175C2&logo=dart" alt="Latest version" /></a>
-  <a href="https://github.com/winterzxzz/lib_app_version/blob/main/LICENSE"><img src="https://img.shields.io/github/license/winterzxzz/lib_app_version?color=success" alt="MIT license" /></a>
+  <a href="https://pub.dev/packages/app_update_check"><img src="https://img.shields.io/pub/v/app_update_check.svg?label=pub.dev&color=0175C2&logo=dart" alt="pub.dev version" /></a>
+  <a href="https://pub.dev/packages/app_update_check/score"><img src="https://img.shields.io/pub/points/app_update_check?label=pub%20points&color=blue" alt="pub points" /></a>
+  <a href="https://pub.dev/packages/app_update_check"><img src="https://img.shields.io/pub/likes/app_update_check?label=likes&color=blue" alt="pub likes" /></a>
+  <a href="https://pub.dev/packages/app_update_check"><img src="https://img.shields.io/pub/dm/app_update_check?label=downloads&color=blue" alt="pub downloads per month" /></a>
+  <a href="https://github.com/winterzxzz/app_update_check/blob/main/LICENSE"><img src="https://img.shields.io/github/license/winterzxzz/app_update_check?color=success" alt="MIT license" /></a>
   <img src="https://img.shields.io/badge/platform-iOS%2013%2B%20%C2%B7%20Android%207%2B-000000?logo=apple&logoColor=white" alt="Platform: iOS 13+, Android 7+" />
   <img src="https://img.shields.io/badge/Flutter-3.22%2B-02569B?logo=flutter&logoColor=white" alt="Flutter 3.22+" />
   <img src="https://img.shields.io/badge/dependencies-none-brightgreen" alt="Zero dependencies" />
-  <!-- Once published to pub.dev:
-  <a href="https://pub.dev/packages/lib_app_version"><img src="https://img.shields.io/pub/v/lib_app_version.svg?label=pub.dev&color=0175C2&logo=dart" alt="pub.dev version" /></a>
-  <a href="https://pub.dev/packages/lib_app_version/score"><img src="https://img.shields.io/pub/points/lib_app_version?label=pub%20points&color=blue" alt="pub points" /></a>
-  <a href="https://pub.dev/packages/lib_app_version"><img src="https://img.shields.io/pub/likes/lib_app_version?label=likes&color=blue" alt="pub likes" /></a>
-  -->
 </p>
 
 <p align="center">
@@ -28,19 +25,20 @@
   <a href="#-customizing-the-dialog">Dialog</a> ·
   <a href="#-version-sources">Sources</a> ·
   <a href="#️-configuration-reference">Configuration</a> ·
-  <a href="#-faq">FAQ</a>
+  <a href="#-faq">FAQ</a> ·
+  <a href="https://pub.dev/documentation/app_update_check/latest/">API docs</a>
 </p>
 
 ---
 
-**lib_app_version** answers the three questions every production app eventually asks: *Is there a newer build in the store?* *Should I force the user to update?* and *Is this build running from TestFlight?* It talks to the iTunes Lookup API and the Google Play listing directly, reads the install receipt natively, and ships an adaptive update dialog — without pulling `package_info_plus`, `url_launcher`, `http` or any other package into your dependency tree.
+**app_update_check** answers the three questions every production app eventually asks: *Is there a newer build in the store?* *Should I force the user to update?* and *Is this build running from TestFlight?* It talks to the iTunes Lookup API and the Google Play listing directly, reads the install receipt natively, and ships an adaptive update dialog — without pulling `package_info_plus`, `url_launcher`, `http` or any other package into your dependency tree.
 
 ```dart
-await AppVersion.showUpdateDialogIfNeeded(context);   // check + dialog, one line
-final bool testFlight = await AppVersion.isTestFlight(); // native, no network
+await AppUpdate.showUpdateDialogIfNeeded(context);   // check + dialog, one line
+final bool testFlight = await AppUpdate.isTestFlight(); // native, no network
 ```
 
-## ✨ Why lib_app_version?
+## ✨ Why app_update_check?
 
 - **📦 Zero dependencies.** The only dependency is `flutter`. Nothing to conflict with the versions of `package_info_plus`, `url_launcher` or `http` your app already uses.
 - **🔧 Zero native setup.** No `AppDelegate` edits, no manifest changes — the plugin registers itself and the `INTERNET` permission is merged automatically.
@@ -50,26 +48,21 @@ final bool testFlight = await AppVersion.isTestFlight(); // native, no network
 - **🛡️ Never throws.** Offline? Store markup changed? You get `status.error` and `isUpdateAvailable == false`; your app keeps running.
 - **⚡ Cached and de-duplicated.** One store request per 30 minutes; concurrent callers share the same in-flight request.
 - **🔌 Pluggable sources.** App Store, Play Store, your own backend, Firebase Remote Config, or a static value for tests.
-- **🧪 Built for testing.** Swap `AppVersion.instance`, inject a fake platform bridge or HTTP function — no method-channel mocking required.
+- **🧪 Built for testing.** Swap `AppUpdate.instance`, inject a fake platform bridge or HTTP function — no method-channel mocking required.
 
 ## 🚀 Quick start
 
 ### 1. Install
 
-```yaml
-dependencies:
-  lib_app_version:
-    git:
-      url: https://github.com/winterzxzz/lib_app_version.git
-      ref: v1.0.0
+```sh
+flutter pub add app_update_check
 ```
 
-Or, inside a monorepo, as a path dependency:
+Or add it to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  lib_app_version:
-    path: ../lib_app_version
+  app_update_check: ^1.0.0
 ```
 
 ### 2. Requirements
@@ -85,12 +78,12 @@ dependencies:
 ### 3. Use it
 
 ```dart
-import 'package:lib_app_version/lib_app_version.dart';
+import 'package:app_update_check/app_update_check.dart';
 
 void main() {
   // Optional. Without it, your bundle id / applicationId is used.
   // A numeric iosId gives you a store link even when the lookup fails.
-  AppVersion.init(
+  AppUpdate.init(
     iosId: '6762586391',
     androidId: 'com.example.app',
   );
@@ -103,7 +96,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Shows the dialog only when the store has a newer version.
-      AppVersion.showUpdateDialogIfNeeded(context);
+      AppUpdate.showUpdateDialogIfNeeded(context);
     });
   }
   // ...
@@ -113,21 +106,21 @@ class _HomePageState extends State<HomePage> {
 Need more control? Every building block is one call away:
 
 ```dart
-final AppVersionStatus status = await AppVersion.check();
+final AppUpdateStatus status = await AppUpdate.check();
 if (status.isUpdateAvailable) {
   debugPrint('${status.localVersion} → ${status.storeVersion}');
 }
 
-final bool testFlight = await AppVersion.isTestFlight();   // iOS, no network
-final AppInstallSource source = await AppVersion.getInstallSource();
-await AppVersion.openStore();                              // Play / App Store app
+final bool testFlight = await AppUpdate.isTestFlight();   // iOS, no network
+final AppInstallSource source = await AppUpdate.getInstallSource();
+await AppUpdate.openStore();                              // Play / App Store app
 ```
 
 That's it — no Swift, no Kotlin, no extra packages.
 
 ## 📦 What you get back
 
-`AppVersion.check()` returns an `AppVersionStatus`:
+`AppUpdate.check()` returns an `AppUpdateStatus`:
 
 | Member | Type | Meaning |
 | --- | --- | --- |
@@ -152,16 +145,16 @@ Version strings are compared numerically (`1.10.0 > 1.9.9`, `1.2 == 1.2.0`); pre
 
 ```dart
 // iOS only, no network involved:
-final bool testFlight = await AppVersion.isTestFlight();
+final bool testFlight = await AppUpdate.isTestFlight();
 
 // Cross-platform "is this a test build?" (TestFlight, Play internal testing, debug):
-final bool testBuild = (await AppVersion.check()).isTestBuild;
+final bool testBuild = (await AppUpdate.check()).isTestBuild;
 ```
 
 A common pattern is serving a different remote configuration to testers:
 
 ```dart
-final bool tester = (await AppVersion.check()).isTestBuild;
+final bool tester = (await AppUpdate.check()).isTestBuild;
 final String key = tester ? 'APP_CONFIG_TESTFLIGHT' : 'APP_CONFIG';
 final String config = remoteConfig.getString(key);
 ```
@@ -187,13 +180,13 @@ An update is **required** when the installed version is below `minimumVersion`. 
 ```dart
 // 1. Per call — e.g. read from Firebase Remote Config
 final String minVersion = remoteConfig.getString('MIN_SUPPORTED_VERSION'); // "1.2.0"
-await AppVersion.showUpdateDialogIfNeeded(context, minimumVersion: minVersion);
+await AppUpdate.showUpdateDialogIfNeeded(context, minimumVersion: minVersion);
 
 // 2. Once, at startup
-AppVersion.init(minimumVersion: '1.2.0');
+AppUpdate.init(minimumVersion: '1.2.0');
 
 // 3. From your own version source (see below)
-AppVersion.init(
+AppUpdate.init(
   source: VersionSource.fromCallback((local) async => StoreVersionInfo(
     version: remoteConfig.getString('LATEST_VERSION'),
     minimumVersion: remoteConfig.getString('MIN_SUPPORTED_VERSION'),
@@ -201,14 +194,14 @@ AppVersion.init(
 );
 
 // Or simply make every update mandatory
-await AppVersion.showUpdateDialogIfNeeded(context, force: true);
+await AppUpdate.showUpdateDialogIfNeeded(context, force: true);
 ```
 
 ## 🎨 Customizing the dialog
 
 ```dart
 // Localized texts and release notes
-await AppVersion.showUpdateDialogIfNeeded(
+await AppUpdate.showUpdateDialogIfNeeded(
   context,
   texts: AppUpdateDialogTexts(
     title: l10n.updateTitle,
@@ -221,7 +214,7 @@ await AppVersion.showUpdateDialogIfNeeded(
 
 // Your own widget — `mandatory` tells you whether it must be blocking,
 // `openStore` opens the listing.
-await AppVersion.showUpdateDialogIfNeeded(
+await AppUpdate.showUpdateDialogIfNeeded(
   context,
   builder: (context, status, mandatory, openStore) => PopScope(
     canPop: !mandatory,
@@ -240,7 +233,7 @@ showDialog(
   builder: (_) => AppUpdateDialog(
     status: status,
     mandatory: true,
-    onUpdate: AppVersion.openStore,
+    onUpdate: AppUpdate.openStore,
   ),
 );
 ```
@@ -275,12 +268,12 @@ class MyApiVersionSource extends VersionSource {
   }
 }
 
-AppVersion.init(source: const MyApiVersionSource());
+AppUpdate.init(source: const MyApiVersionSource());
 ```
 
 ## ⚙️ Configuration reference
 
-All parameters are shared by `AppVersion.init(...)` and `AppVersionChecker(...)`.
+All parameters are shared by `AppUpdate.init(...)` and `AppUpdateChecker(...)`.
 
 | Parameter | Default | Description |
 | --- | --- | --- |
@@ -293,7 +286,7 @@ All parameters are shared by `AppVersion.init(...)` and `AppVersionChecker(...)`
 | `cacheDuration` | 30 min | How long a store answer is reused. |
 | `timeout` | 10 s | Network timeout per request. |
 | `source` | store lookup | Custom `VersionSource`. |
-| `platform` | method channel | `LibAppVersionPlatform` bridge, replaceable in tests. |
+| `platform` | method channel | `AppUpdateCheckPlatform` bridge, replaceable in tests. |
 | `httpGet` | `dart:io` | `HttpGet` function, replaceable in tests. |
 
 ## 🧪 Testing
@@ -301,31 +294,31 @@ All parameters are shared by `AppVersion.init(...)` and `AppVersionChecker(...)`
 Try the update flow before anything is published:
 
 ```dart
-AppVersion.init(forceStoreVersion: '99.0.0'); // dev builds only
+AppUpdate.init(forceStoreVersion: '99.0.0'); // dev builds only
 ```
 
 Unit-test your own code without touching the network or a method channel:
 
 ```dart
-AppVersion.instance = AppVersionChecker(
-  platform: FakeAppPlatform(),                         // implements LibAppVersionPlatform
+AppUpdate.instance = AppUpdateChecker(
+  platform: FakeAppPlatform(),                         // implements AppUpdateCheckPlatform
   source: const StaticVersionSource(version: '9.9.9'), // or minimumVersion: ...
 );
 ```
 
-`AppVersionChecker` is a plain class — create several instances if you need different configurations.
+`AppUpdateChecker` is a plain class — create several instances if you need different configurations.
 
 ## 🔬 How it works
 
 ```text
-AppVersion.check()
- ├─ LibAppVersionPlatform.getAppInfo()          MethodChannel "lib_app_version"
+AppUpdate.check()
+ ├─ AppUpdateCheckPlatform.getAppInfo()          MethodChannel "app_update_check"
  │    version · build · packageName · installSource      (Swift / Kotlin, cached)
  └─ VersionSource.fetch(local)                  cached 30 min, de-duplicated
       ├─ iOS      → https://itunes.apple.com/lookup?id=…            (JSON)
       ├─ Android  → https://play.google.com/store/apps/details?id=…  (HTML)
       └─ custom   → your API / Remote Config
- → AppVersionStatus  →  showUpdateDialogIfNeeded()  →  openStore()
+ → AppUpdateStatus  →  showUpdateDialogIfNeeded()  →  openStore()
                                                         market:// → https (Android)
                                                         itms-apps:// → https (iOS)
 ```
@@ -357,7 +350,7 @@ flutter run
 
 <details>
 <summary><strong>Why not <code>new_version_plus</code> / <code>upgrader</code>?</strong></summary>
-Those packages bring their own transitive dependencies (<code>package_info_plus</code>, <code>http</code>, <code>url_launcher</code>, …) that regularly conflict with the versions an app already pins. <code>lib_app_version</code> has none, adds TestFlight / install-source detection, first-class forced updates, caching and a test-friendly API.
+Those packages bring their own transitive dependencies (<code>package_info_plus</code>, <code>http</code>, <code>url_launcher</code>, …) that regularly conflict with the versions an app already pins. <code>app_update_check</code> has none, adds TestFlight / install-source detection, first-class forced updates, caching and a test-friendly API.
 </details>
 
 <details>
@@ -372,7 +365,7 @@ The iTunes Lookup API can lag a few hours behind a first release. Pass a numeric
 
 <details>
 <summary><strong>Does TestFlight detection need network access?</strong></summary>
-No. <code>AppVersion.isTestFlight()</code> only inspects the app bundle and returns instantly. Only the store comparison goes online.
+No. <code>AppUpdate.isTestFlight()</code> only inspects the app bundle and returns instantly. Only the store comparison goes online.
 </details>
 
 <details>
@@ -397,10 +390,11 @@ Only the leading numeric components count: <code>1.2.3</code>, <code>1.2</code>,
 
 ## 🤝 Contributing
 
-Issues and pull requests are welcome! If this package saved you time, a ⭐ on [GitHub](https://github.com/winterzxzz/lib_app_version) helps others discover it.
+Issues and pull requests are welcome! If this package saved you time, a ⭐ on [GitHub](https://github.com/winterzxzz/app_update_check) and a 👍 on [pub.dev](https://pub.dev/packages/app_update_check) help others discover it.
 
-- 🐛 [Report a bug](https://github.com/winterzxzz/lib_app_version/issues)
-- 📝 [Changelog](https://github.com/winterzxzz/lib_app_version/blob/main/CHANGELOG.md)
+- 🐛 [Report a bug](https://github.com/winterzxzz/app_update_check/issues)
+- 📝 [Changelog](https://github.com/winterzxzz/app_update_check/blob/main/CHANGELOG.md)
+- 📚 [API reference](https://pub.dev/documentation/app_update_check/latest/)
 
 ```sh
 flutter pub get && flutter analyze && flutter test   # 66 tests, runs in ~2 s
@@ -408,7 +402,7 @@ flutter pub get && flutter analyze && flutter test   # 66 tests, runs in ~2 s
 
 ## 📄 License
 
-MIT © [winterzxzz](https://github.com/winterzxzz). See [LICENSE](https://github.com/winterzxzz/lib_app_version/blob/main/LICENSE).
+MIT © [winterzxzz](https://github.com/winterzxzz). See [LICENSE](https://github.com/winterzxzz/app_update_check/blob/main/LICENSE).
 
 ---
 

@@ -1,17 +1,17 @@
 import Flutter
 import UIKit
 
-/// Native side of `lib_app_version`.
+/// Native side of `app_update_check`.
 ///
 /// Methods:
 ///  - `getAppInfo`   -> [version, buildNumber, packageName, installSource]
 ///  - `openUrl(url)` -> true when iOS could open the URL
-public class LibAppVersionPlugin: NSObject, FlutterPlugin {
-  private static let channelName = "lib_app_version"
+public class AppUpdateCheckPlugin: NSObject, FlutterPlugin {
+  private static let channelName = "app_update_check"
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: channelName, binaryMessenger: registrar.messenger())
-    let instance = LibAppVersionPlugin()
+    let instance = AppUpdateCheckPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 

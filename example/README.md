@@ -1,6 +1,6 @@
-# lib_app_version_example
+# app_update_check_example
 
-Demonstrates how to use the lib_app_version plugin.
+Demonstrates how to use the app_update_check plugin.
 
 ## Getting Started
 

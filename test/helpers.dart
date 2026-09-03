@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:lib_app_version/lib_app_version.dart';
+import 'package:app_update_check/app_update_check.dart';
 
 const LocalAppInfo androidInfo = LocalAppInfo(
   version: '1.2.0',
@@ -17,7 +17,7 @@ const LocalAppInfo iosInfo = LocalAppInfo(
   installSource: AppInstallSource.appStore,
 );
 
-class FakePlatform extends LibAppVersionPlatform {
+class FakePlatform extends AppUpdateCheckPlatform {
   FakePlatform({
     this.info = androidInfo,
     this.infoError,

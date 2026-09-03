@@ -4,19 +4,19 @@
 import PackageDescription
 
 let package = Package(
-    name: "lib_app_version",
+    name: "app_update_check",
     platforms: [
         .iOS("13.0")
     ],
     products: [
-        .library(name: "lib-app-version", targets: ["lib_app_version"])
+        .library(name: "app-update-check", targets: ["app_update_check"])
     ],
     dependencies: [
         .package(name: "FlutterFramework", path: "../FlutterFramework")
     ],
     targets: [
         .target(
-            name: "lib_app_version",
+            name: "app_update_check",
             dependencies: [
                 .product(name: "FlutterFramework", package: "FlutterFramework")
             ],

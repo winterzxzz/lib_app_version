@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lib_app_version/lib_app_version.dart';
+import 'package:app_update_check/app_update_check.dart';
 
 import 'helpers.dart';
 
@@ -13,16 +13,16 @@ void main() {
   /// and taps it. The returned list receives the status once the call
   /// completes, i.e. after the dialog has been dismissed (or right away when
   /// no dialog was needed).
-  Future<List<AppVersionStatus>> pumpAndTrigger(
+  Future<List<AppUpdateStatus>> pumpAndTrigger(
     WidgetTester tester,
-    AppVersionChecker checker, {
+    AppUpdateChecker checker, {
     bool force = false,
     AppUpdateDialogTexts texts = const AppUpdateDialogTexts(),
     AppUpdateDialogBuilder? builder,
     bool showReleaseNotes = false,
     TargetPlatform platform = TargetPlatform.android,
   }) async {
-    final List<AppVersionStatus> results = <AppVersionStatus>[];
+    final List<AppUpdateStatus> results = <AppUpdateStatus>[];
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(platform: platform),
@@ -55,14 +55,14 @@ void main() {
     WidgetTester tester,
   ) async {
     final FakePlatform platform = FakePlatform();
-    final AppVersionChecker checker = AppVersionChecker(
+    final AppUpdateChecker checker = AppUpdateChecker(
       platform: platform,
       source: const StaticVersionSource(
         version: '1.3.0',
         releaseNotes: 'Shiny',
       ),
     );
-    final List<AppVersionStatus> results = await pumpAndTrigger(
+    final List<AppUpdateStatus> results = await pumpAndTrigger(
       tester,
       checker,
       showReleaseNotes: true,
@@ -88,14 +88,11 @@ void main() {
     WidgetTester tester,
   ) async {
     final FakePlatform platform = FakePlatform();
-    final AppVersionChecker checker = AppVersionChecker(
+    final AppUpdateChecker checker = AppUpdateChecker(
       platform: platform,
       source: const StaticVersionSource(version: '1.3.0'),
     );
-    final List<AppVersionStatus> results = await pumpAndTrigger(
-      tester,
-      checker,
-    );
+    final List<AppUpdateStatus> results = await pumpAndTrigger(tester, checker);
 
     await tester.tap(find.text('Update'));
     await tester.pumpAndSettle();
@@ -106,7 +103,7 @@ void main() {
 
   testWidgets('force makes the dialog mandatory', (WidgetTester tester) async {
     final FakePlatform platform = FakePlatform();
-    final AppVersionChecker checker = AppVersionChecker(
+    final AppUpdateChecker checker = AppUpdateChecker(
       platform: platform,
       source: const StaticVersionSource(version: '1.3.0'),
     );
@@ -136,7 +133,7 @@ void main() {
   testWidgets('minimumVersion makes the dialog mandatory', (
     WidgetTester tester,
   ) async {
-    final AppVersionChecker checker = AppVersionChecker(
+    final AppUpdateChecker checker = AppUpdateChecker(
       minimumVersion: '1.2.5',
       platform: FakePlatform(),
       source: const StaticVersionSource(version: '1.3.0'),
@@ -148,11 +145,11 @@ void main() {
   });
 
   testWidgets('nothing is shown when up to date', (WidgetTester tester) async {
-    final AppVersionChecker checker = AppVersionChecker(
+    final AppUpdateChecker checker = AppUpdateChecker(
       platform: FakePlatform(),
       source: const StaticVersionSource(version: '1.2.0'),
     );
-    final List<AppVersionStatus> results = await pumpAndTrigger(
+    final List<AppUpdateStatus> results = await pumpAndTrigger(
       tester,
       checker,
       force: true,
@@ -164,7 +161,7 @@ void main() {
   testWidgets('does not open a second dialog while one is visible', (
     WidgetTester tester,
   ) async {
-    final AppVersionChecker checker = AppVersionChecker(
+    final AppUpdateChecker checker = AppUpdateChecker(
       platform: FakePlatform(),
       source: const StaticVersionSource(version: '1.3.0'),
     );
@@ -178,7 +175,7 @@ void main() {
   });
 
   testWidgets('custom texts are used', (WidgetTester tester) async {
-    final AppVersionChecker checker = AppVersionChecker(
+    final AppUpdateChecker checker = AppUpdateChecker(
       platform: FakePlatform(),
       source: const StaticVersionSource(version: '1.3.0'),
     );
@@ -202,7 +199,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final FakePlatform platform = FakePlatform();
-    final AppVersionChecker checker = AppVersionChecker(
+    final AppUpdateChecker checker = AppUpdateChecker(
       platform: platform,
       source: const StaticVersionSource(version: '1.3.0'),
     );
@@ -212,7 +209,7 @@ void main() {
       builder:
           (
             BuildContext context,
-            AppVersionStatus status,
+            AppUpdateStatus status,
             bool mandatory,
             Future<bool> Function() openStore,
           ) {
@@ -234,7 +231,7 @@ void main() {
   });
 
   testWidgets('uses Cupertino widgets on iOS', (WidgetTester tester) async {
-    final AppVersionChecker checker = AppVersionChecker(
+    final AppUpdateChecker checker = AppUpdateChecker(
       platform: FakePlatform(info: iosInfo),
       source: const StaticVersionSource(version: '1.3.0'),
     );
