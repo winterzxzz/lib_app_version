@@ -49,9 +49,6 @@ jobs:
     name: Build example (iOS)
     runs-on: macos-latest
     needs: test
-    # macOS runners cost 10x minutes on private repos, so this job is manual only
-    # (Actions tab -> CI -> Run workflow). Drop the condition once the repo is public.
-    if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
