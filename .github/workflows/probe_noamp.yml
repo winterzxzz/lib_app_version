@@ -1,0 +1,64 @@
+name: probe_noamp
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Analyze and test
+    runs-on: ubuntu-latest
+    if: ${{ false }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: dart format --output=none --set-exit-if-changed .
+      - run: flutter analyze
+      - run: flutter test
+      - name: Example app
+        working-directory: example
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+
+  android:
+    name: Build example (Android)
+    runs-on: ubuntu-latest
+    if: ${{ false }}
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter build apk --debug
+        working-directory: example
+
+  ios:
+    name: Build example (iOS)
+    runs-on: macos-latest
+    if: ${{ false }}
+    needs: test
+    # macOS runners cost 10x minutes on private repos, so this job is manual only
+    # (Actions tab -> CI -> Run workflow). Drop the condition once the repo is public.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter build ios --simulator --no-codesign
+        working-directory: example
